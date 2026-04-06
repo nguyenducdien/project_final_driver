@@ -6,7 +6,8 @@ PWD := $(shell pwd)
 all:
 	make -C $(KDIR) M=$(PWD) modules
 	gcc -o app user_app.c
+	gcc -o cli_app cli_app.c
 
 clean:
 	make -C $(KDIR) M=$(PWD) clean
-	rm -f app
+	rm -f app cli_app
