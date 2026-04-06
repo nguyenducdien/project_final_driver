@@ -33,13 +33,13 @@ int main(int argc, char *argv[]) {
     char output[100] = {0};
 
     if (!is_valid(input, from)) {
-        printf("ERROR: Invalid input for base %d.\n", from);
+        printf("Vui long nhap dung so cho he so %d.\n", from);
         return 1;
     }
 
     int fd = open(DEV, O_RDWR);
     if (fd < 0) {
-        printf("ERROR: Cannot open /dev/base_convert\n");
+        printf("Ban chua cam USB! Vui long cam USB\n");
         return 1;
     }
 

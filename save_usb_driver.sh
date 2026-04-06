@@ -51,7 +51,7 @@ if [ $? -ne 0 ]; then
     echo "LỖI: Mount file system thất bại!"
 else
     # 6. Ghi nội dung vào USB
-    echo "$CONTENT" | sudo tee "$MOUNT_DIR/ketqua_chuyendoi.txt" >/dev/null
+    echo "$CONTENT" | sudo tee -a "$MOUNT_DIR/ketqua_chuyendoi.txt" >/dev/null
     sync
     sudo umount "$MOUNT_DIR"
     echo "Ghi file THÀNH CÔNG!"
