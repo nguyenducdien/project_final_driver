@@ -1,11 +1,10 @@
-<<<<<<< HEAD
+
 # Hệ Thống Chuyển Đổi Cơ Số Bằng USB (USB Base Converter)
 
 Dự án này là một trình điều khiển nhân hệ điều hành Linux (Kernel Driver) giúp giao tiếp với một thiết bị USB vật lý để thực hiện tính toán chuyển đổi cơ số (từ hệ 2-36). Nó đi kèm với một Giao diện người dùng (GUI) đẹp mắt hỗ trợ cả việc chuyển đổi trên chip USB lẫn chức năng lưu trữ kết quả thẳng vào trong thẻ nhớ USB (Hot-swapping).
 
----
 
-## 🛠 YÊU CẦU MÔI TRƯỜNG (PREREQUISITES)
+## YÊU CẦU MÔI TRƯỜNG (PREREQUISITES)
 
 Hệ thống được thiết kế dành cho Linux. Đảm bảo bạn đã cài đặt các gói cần thiết sau:
 
@@ -23,9 +22,8 @@ sudo yum install kernel-devel kernel-headers gcc make python3-pip python3-tkinte
 sudo pip3 install customtkinter
 ```
 
----
 
-## 🚀 HƯỚNG DẪN BIÊN DỊCH VÀ CHẠY ỨNG DỤNG
+## HƯỚNG DẪN BIÊN DỊCH VÀ CHẠY ỨNG DỤNG
 
 ### Bước 1: Biên dịch mã nguồn C
 Tiến hành buid ra file Kernel Module (`.ko`) và app giao tiếp CLI bằng lệnh:
@@ -51,7 +49,7 @@ sudo python3 gui_app.py
 
 ---
 
-## 🎯 HƯỚNG DẪN SỬ DỤNG GIAO DIỆN
+## HƯỚNG DẪN SỬ DỤNG GIAO DIỆN
 
 Khi Cửa sổ xuất hiện, bạn có 3 tính năng mạnh mẽ:
 1. **[CHUYỂN ĐỔI]:** Nhập đầy đủ 3 ô Hệ Nguồn, Hệ Đích, Con số. Nhấn để Kernel xử lý phép toán dưới nền và trả kết quả về bảng Nhật Ký đen.
@@ -60,14 +58,9 @@ Khi Cửa sổ xuất hiện, bạn có 3 tính năng mạnh mẽ:
 
 ---
 
-## 🧹 DỌN DẸP HỆ THỐNG
+## DỌN DẸP HỆ THỐNG
 Sau khi làm việc xong, muốn gỡ bỏ hoàn toàn file đã build:
 ```bash
 sudo rmmod base_convert_driver
 make clean
-```
-=======
-Các bước chạy
- ./fix_usb.sh 
-==>  sudo ./app
->>>>>>> 365d87ed11532699c1c837a936a4870c9af5b5ab
+

@@ -112,7 +112,7 @@ class BaseConverterApp(ctk.CTk):
             return
             
         try:
-            res = subprocess.run(["./cli_app", f, t, n], capture_output=True, text=True)
+            res = subprocess.run(["./cli_app", f, t, n], capture_output=True, text=True, errors="replace")
             if res.returncode != 0:
                 self.append_log(f"[LỖI] {res.stdout.strip() or 'Giao tiếp Driver Kernel thất bại!'}")
                 return
@@ -129,15 +129,30 @@ class BaseConverterApp(ctk.CTk):
             messagebox.showinfo("Trống", "Chưa có kết quả tính toán nào hiện trên màn hình để lưu cả!")
             return
             
-        full_text = "=== KẾT QUẢ CHUYỂN ĐỔI ===\n" + "\n".join([line for line in self.log_content if not line.startswith(">>>")])
+        full_text ="\n".join([line for line in self.log_content if not line.startswith(">>>")])
         
-        self.append_log("\n>>> TIẾN TRÌNH: Đang ngắt Module Driver (bc_usb) ...")
+        self.append_log("\n>>> TIẾN TRÌNH: Mã hóa AES văn bản thông qua Kernel Driver...")
+        self.update()
+        
+        # Băm nhỏ văn bản làm các khối 120 ký tự để ném xuống bộ đệm 128 bytes của Kernel
+        ciphertext_hex = ""
+        chunk_size = 120
+        for i in range(0, len(full_text), chunk_size):
+            chunk = full_text[i:i+chunk_size]
+            res = subprocess.run(["./crypto_cli", "1", chunk], capture_output=True, text=True, errors="replace")
+            if res.returncode == 0:
+                ciphertext_hex += res.stdout.strip()
+            else:
+                messagebox.showerror("Lỗi Mã Hóa", "Giao tiếp mã hóa lỗi! Bạn đã make lại chưa?")
+                return
+        
+        self.append_log(">>> TIẾN TRÌNH: Đang ngắt Module Driver (bc_usb) ...")
         self.update()
         
         try:
             p = subprocess.Popen(["sudo", "bash", "./save_usb_driver.sh"], 
-                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            out, err = p.communicate(input=full_text)
+                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, errors="replace")
+            out, err = p.communicate(input=ciphertext_hex)
             
             if p.returncode == 0:
                 self.append_log(">>> LƯU FILE: Ghi đè ketqua_chuyendoi.txt lên chính USB đó!")
@@ -156,13 +171,28 @@ class BaseConverterApp(ctk.CTk):
         
         try:
             p = subprocess.Popen(["sudo", "bash", "./read_usb_driver.sh"], 
-                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, errors="replace")
             out, err = p.communicate()
             
             if p.returncode == 0:
-                self.append_log(">>> KẾT QUẢ TRÍCH XUẤT TỪ USB:")
-                if out.strip():
-                    self.append_log(out.strip())
+                enc_hex = out.replace('\n', '').replace('\r', '').strip()
+                self.append_log(">>> KẾT QUẢ TRÍCH XUẤT TỪ USB (ĐANG GIẢI MÃ...):")
+                if enc_hex:
+                    decrypted_text = ""
+                    # Cipher HEX size for BUF_SIZE 128 is 256 chars
+                    hex_chunk_size = 256
+                    for i in range(0, len(enc_hex), hex_chunk_size):
+                        h_chunk = enc_hex[i:i+hex_chunk_size]
+                        res = subprocess.run(["./crypto_cli", "2", h_chunk], capture_output=True, text=True, errors="replace")
+                        if res.returncode == 0:
+                            # Strip NULL padding added during encryption
+                            decrypted_text += res.stdout.strip("\x00").strip() + "\n"
+                    
+                    if decrypted_text.strip():
+                        self.append_log(decrypted_text.strip())
+                    else:
+                        self.append_log(enc_hex) # Fallback raw print if not encrypted
+                
                 self.append_log(">>> KẾT NỐI: Đã trả lại phần cứng cho Kernel Driver C tính toán.")
             else:
                 self.append_log(f">>> [LỖI TRÍCH XUẤT USB]: {err.strip()}")
