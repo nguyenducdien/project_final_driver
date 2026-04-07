@@ -38,7 +38,7 @@ class BaseConverterApp(ctk.CTk):
         self.frame_inputs.pack(pady=10)
 
         # 1. Từ Hệ
-        self.lbl_from = ctk.CTkLabel(self.frame_inputs, text="Hệ Cơ Số Nguồn (2-36):", font=ctk.CTkFont(size=15))
+        self.lbl_from = ctk.CTkLabel(self.frame_inputs, text="Hệ Cơ Số Nguồn", font=ctk.CTkFont(size=15))
         self.lbl_from.grid(row=0, column=0, padx=15, pady=15, sticky="e")
         
         self.entry_from = ctk.CTkEntry(self.frame_inputs, width=220, placeholder_text="Ví dụ: 10", 
@@ -46,7 +46,7 @@ class BaseConverterApp(ctk.CTk):
         self.entry_from.grid(row=0, column=1, padx=10, pady=15)
 
         # 2. Sang Hệ
-        self.lbl_to = ctk.CTkLabel(self.frame_inputs, text="Hệ Cơ Số Đích (2-36):", font=ctk.CTkFont(size=15))
+        self.lbl_to = ctk.CTkLabel(self.frame_inputs, text="Hệ Cơ Số Đích", font=ctk.CTkFont(size=15))
         self.lbl_to.grid(row=1, column=0, padx=15, pady=15, sticky="e")
         
         self.entry_to = ctk.CTkEntry(self.frame_inputs, width=220, placeholder_text="Ví dụ: 2", 
